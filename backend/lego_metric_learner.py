@@ -46,10 +46,7 @@ def fast_cosine_matrix(u, M):
         u_norm = np.sqrt(u_norm)
         v_norm = np.sqrt(v_norm)
 
-        if (u_norm == 0) or (v_norm == 0):
-            ratio = 1.0
-        else:
-            ratio = udotv / (u_norm * v_norm)
+        ratio = 1.0 if (u_norm == 0) or (v_norm == 0) else udotv / (u_norm * v_norm)
         scores[i] = ratio
     return scores
 
@@ -112,9 +109,7 @@ def lego(u, v, y, r=0.5, A_prev=None):
     # calculate the new metric matrix A_new using y_bar
     A_new_up = r * (y_bar - y) * np.dot(A_prev, np.dot(np.dot(z, z.T), A_prev))
     A_new_down = 1 + r * (y_bar - y) * y_current
-    A_new = A_prev - A_new_up / A_new_down
-
-    return A_new
+    return A_prev - A_new_up / A_new_down
 
 
 # iterates through the constraints and updates the A matrix
@@ -126,10 +121,7 @@ def batch_update(doc_vectors, constraints):
     for doc_u, doc_v, same_class in constraints:
         u_t = doc_vectors[doc_u]
         v_t = doc_vectors[doc_v]
-        if same_class == 1:
-            y_t = 1
-        else:
-            y_t = -1
+        y_t = 1 if same_class == 1 else -1
         # A_ = lego(u_t, v_t, y_t, A_prev=A_)
         A_ = update(u_t, v_t, y_t, A_)
 

@@ -91,7 +91,7 @@ num_uncompressed_features = len(features)
 frequencies = np.flip(np.argsort(count_by_word))
 
 # Reduce vocabulary to most frequent words
-vocab = set([features[idx] for idx in frequencies[:vocab_size]])
+vocab = {features[idx] for idx in frequencies[:vocab_size]}
 
 # Create a small bigram model on most frequent words to filter down vocabulary quickly
 print_ts("Creating bigram model")
@@ -139,9 +139,7 @@ def get_terms(word):
         return []
 
     def get_terms_raw():
-        # Use symspell's compound search to potentially split apart words
-        spell_checked = sym_spell.lookup_compound(word, 2)[0].term.split(" ")
-        return spell_checked
+        return sym_spell.lookup_compound(word, 2)[0].term.split(" ")
 
     terms = get_terms_raw()
     # Filter terms to only include those in the reduced vocab
